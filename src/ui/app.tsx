@@ -8,16 +8,29 @@ import {
   Routes,
   RouterProvider,
   useNavigate,
+  Outlet,
 } from "react-router-dom";
+import Home from './components/home';
+import Nav from './nav';
 
-function MyHome() {
-  const nav = useNavigate();
-
-  const handleClick = () => {
-    nav('/a');
-  }
-
-  return <button onClick={handleClick}>Hi</button>
+function Root() {
+  return <div>
+    <div data-bs-theme="dark">
+      <nav data-bs-theme="dark" className="navbar bg-body-tertiary">
+        <div className="container-fluid">
+          <span className="navbar-brand mb-0 h1">Budge</span>
+        </div>
+      </nav>
+      <div className='container-fluid content-container'>
+        <div className="row">
+          <Nav />
+          <div className="col">
+            <Outlet />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 }
 
 function render() {
@@ -25,12 +38,17 @@ function render() {
 
   const router = createMemoryRouter([
     {
-      path: "*",
-      element: <MyHome />,
-    },
-    {
-      path: "/a",
-      element: <div>Hello world!</div>,
+      element: <Root />,
+      children: [
+        {
+          path: "/",
+          element: <Home />,
+        },
+        {
+          path: "/a",
+          element: <div>Hello world!</div>,
+        },
+      ]
     }
   ]);
 
