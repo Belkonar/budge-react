@@ -1,19 +1,43 @@
 import * as ReactDOM from 'react-dom/client';
+import React from 'react';
+import {
+  createBrowserRouter,
+  createMemoryRouter,
+  MemoryRouter,
+  Route,
+  Routes,
+  RouterProvider,
+  useNavigate,
+} from "react-router-dom";
+
+function MyHome() {
+  const nav = useNavigate();
+
+  const handleClick = () => {
+    nav('/a');
+  }
+
+  return <button onClick={handleClick}>Hi</button>
+}
 
 function render() {
   const root = ReactDOM.createRoot(document.getElementById('root')!);
 
+  const router = createMemoryRouter([
+    {
+      path: "*",
+      element: <MyHome />,
+    },
+    {
+      path: "/a",
+      element: <div>Hello world!</div>,
+    }
+  ]);
+
   root.render(
-    <div>
-      <nav data-bs-theme="dark" className="navbar bg-body-tertiary">
-        <div className="container-fluid">
-          <span className="navbar-brand mb-0 h1">Budge</span>
-        </div>
-      </nav>
-      <div className='container-fluid'>
-        d
-      </div>
-    </div>
+    <React.StrictMode>
+      <RouterProvider router={router} />
+    </React.StrictMode>
   );
 }
 
