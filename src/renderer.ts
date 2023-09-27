@@ -1,4 +1,4 @@
-import './index.css';
+import './index.scss';
 import './ui/app'
 
 declare global {
