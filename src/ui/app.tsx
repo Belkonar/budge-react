@@ -1,20 +1,14 @@
 import * as ReactDOM from 'react-dom/client';
 import React from 'react';
 import {
-  createBrowserRouter,
   createMemoryRouter,
-  MemoryRouter,
-  Route,
-  Routes,
   RouterProvider,
   useNavigate,
   Outlet,
 } from "react-router-dom";
 import Home from './components/home';
-import Nav from './nav';
-import { AppBar, Box, Button, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemText, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
+import { AppBar, Box, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemText, PaletteMode, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { dark } from '@mui/material/styles/createPalette';
 
 function Root() {
   const [state, setState] = React.useState({
@@ -23,7 +17,7 @@ function Root() {
 
   const nav = useNavigate();
 
-  const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+  const toggleDrawer = (open: boolean) => () => {
     setState({ ...state, open: open });
   }
 
@@ -73,8 +67,10 @@ function Root() {
   </div>
 }
 
-function render() {
-  const root = ReactDOM.createRoot(document.getElementById('root')!);
+function AppRoot() {
+  const [state, setState] = React.useState<{ mode: PaletteMode }>({
+    mode: 'dark'
+  });
 
   const router = createMemoryRouter([
     {
@@ -94,16 +90,22 @@ function render() {
 
   const darkTheme = createTheme({
     palette: {
-      mode: 'dark',
+      mode: state.mode,
     },
   });
 
+  return <ThemeProvider theme={darkTheme}>
+    <CssBaseline />
+    <RouterProvider router={router} />
+  </ThemeProvider>
+}
+
+function render() {
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+
   root.render(
     <React.StrictMode>
-      <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
-        <RouterProvider router={router} />
-      </ThemeProvider>
+      <AppRoot />
     </React.StrictMode>
   );
 }
