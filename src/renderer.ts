@@ -5,10 +5,7 @@ import './ui/app'
 
 declare global {
   interface Window {
-    dataApi: {
-      query: () => Promise<string>;
-      exec: () => Promise<string>;
-    };
+    dataApi: DataApi;
   }
 }
 

@@ -12,10 +12,15 @@ if (require('electron-squirrel-startup')) {
 
 let setup = false;
 
+const dataApi: DataApi = {
+  query: async () => 'query',
+  exec: async () => 'exec',
+}
+
 const createWindow = (): void => {
   if (!setup) {
-    ipcMain.handle('query', async () => "query");
-    ipcMain.handle('exec', async () => "exec");
+    ipcMain.handle('query', dataApi.query);
+    ipcMain.handle('exec', dataApi.exec);
 
     setup = true;
   }
