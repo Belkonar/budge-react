@@ -4,7 +4,10 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { contextBridge, ipcRenderer } = require('electron')
 
-contextBridge.exposeInMainWorld('dataApi', {
+const dataApi: DataApi = {
   query: () => ipcRenderer.invoke('query'),
-  exec: () => ipcRenderer.invoke('exec')
-})
+  exec: () => ipcRenderer.invoke('exec'),
+  insertOne: (collection: string, obj: any) => ipcRenderer.invoke('insertOne', collection, obj),
+}
+
+contextBridge.exposeInMainWorld('dataApi', dataApi)

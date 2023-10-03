@@ -10,6 +10,6 @@ declare global {
 }
 
 
-window.dataApi.exec().then((result) => {
+window.dataApi.insertOne("hi", { 'name': 'bob' }).then((result) => {
   console.log(result);
 })
