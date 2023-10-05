@@ -22,16 +22,29 @@ async function findManyHandler(request: IpcFindMany) {
   }
 }
 
+async function findOneHandler(request: IpcFindOne) {
+  const collection = database.collection(request.collection);
+
+  if (request.options) {
+    return await collection.findOne(request.query, request.options);
+  }
+  else {
+    return await collection.findOne(request.query);
+  }
+}
+
 const handlers = {
   insertOne: insertOneHandler,
   findMany: findManyHandler,
+  findOne: findOneHandler,
 };
 
 async function dataApi(request: IpcRequest) {
   const handler = handlers[request.kind];
 
   if (handler) {
-    return handler(request);
+    // Because of the union type, we need to cast the request to any.
+    return handler(request as any);
   }
   else {
     // TODO: expose backend errors to the frontend

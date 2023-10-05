@@ -1,4 +1,4 @@
-type IpcRequest = IpcInsertOne;
+type IpcRequest = IpcInsertOne | IpcFindMany | IpcFindOne;
 
 interface IpcInsertOne {
   kind: 'insertOne';
@@ -8,6 +8,13 @@ interface IpcInsertOne {
 
 interface IpcFindMany {
   kind: 'findMany';
+  collection: string;
+  query: any;
+  options: any | null;
+}
+
+interface IpcFindOne {
+  kind: 'findOne';
   collection: string;
   query: any;
   options: any | null;
