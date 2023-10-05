@@ -33,10 +33,28 @@ async function findOneHandler(request: IpcFindOne) {
   }
 }
 
+async function deleteOneHandler(request: IpcDeleteOne) {
+  const collection = database.collection(request.collection);
+  await collection.deleteOne(request.query);
+}
+
+async function updateOneHandler(request: IpcUpdateOne) {
+  const collection = database.collection(request.collection);
+
+  if (request.options) {
+    return await collection.updateOne(request.query, request.update, request.options);
+  }
+  else {
+    return await collection.updateOne(request.query, request.update);
+  }
+}
+
 const handlers = {
   insertOne: insertOneHandler,
   findMany: findManyHandler,
   findOne: findOneHandler,
+  deleteOne: deleteOneHandler,
+  updateOne: updateOneHandler,
 };
 
 async function dataApi(request: IpcRequest) {
