@@ -1,4 +1,4 @@
-import { Filter, FindOptions } from "mongodb";
+import { Filter, FindOptions } from 'mongodb';
 
 function ipc<T>(request: IpcRequest): Promise<T> {
   return window.dataApi(request);

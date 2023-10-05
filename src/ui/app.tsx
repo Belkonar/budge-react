@@ -5,7 +5,7 @@ import {
   RouterProvider,
   useNavigate,
   Outlet,
-} from "react-router-dom";
+} from 'react-router-dom';
 import Home from './components/home';
 import { AppBar, Box, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemText, PaletteMode, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -77,11 +77,11 @@ function AppRoot() {
       element: <Root />,
       children: [
         {
-          path: "/",
+          path: '/',
           element: <Home />,
         },
         {
-          path: "/a",
+          path: '/a',
           element: <div>Hello world!</div>,
         },
       ]
