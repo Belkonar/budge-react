@@ -2,14 +2,18 @@
 
 import './index.scss';
 import './ui/app'
+import { dataService } from './ui/data-service';
 
-declare global {
-  interface Window {
-    dataApi: DataApi;
-  }
-}
+const request: IpcRequest = {
+  kind: 'insertOne',
+  collection: 'movies',
+  obj: {
+    title: 'Star Wars',
+    year: 1977,
+  },
+};
 
-
-window.dataApi.insertOne("hi", { 'name': 'bob' }).then((result) => {
-  console.log(result);
-})
+dataService.insertOne('movies', {
+  title: 'Star fWars',
+  year: 1977,
+});
