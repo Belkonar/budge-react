@@ -8,7 +8,7 @@ export default function ActionsMenu() {
     sx={{ backgroundColor: 'background.paper' }}
     subheader={
       <ListSubheader component="div" id="nested-list-subheader">
-        Actions
+        Manage
       </ListSubheader>
     }
   >

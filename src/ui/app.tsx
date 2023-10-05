@@ -6,7 +6,7 @@ import {
   Outlet,
 } from 'react-router-dom';
 import Home from './components/home';
-import { AppBar, Box, CssBaseline, Divider, Drawer, PaletteMode, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
+import { AppBar, Box, CssBaseline, Drawer, PaletteMode, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
 import AccountsMenu from './components/menus/accounts-menu';
 import ActionsMenu from './components/menus/actions-menu';
 
@@ -16,7 +16,7 @@ function Root() {
   return <Box sx={{ display: 'flex' }}>
     <AppBar
       position='fixed'
-      sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
     >
       <Toolbar variant='dense'>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -38,7 +38,6 @@ function Root() {
       anchor="left"
     >
       <Toolbar variant='dense' />
-      <Divider />
       <ActionsMenu />
       <AccountsMenu />
     </Drawer>
