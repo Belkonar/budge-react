@@ -3,42 +3,22 @@ import React from 'react';
 import {
   createMemoryRouter,
   RouterProvider,
-  useNavigate,
   Outlet,
 } from 'react-router-dom';
 import Home from './components/home';
-import { AppBar, Box, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemText, PaletteMode, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import { AppBar, Box, CssBaseline, Divider, Drawer, PaletteMode, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
+import AccountsMenu from './components/menus/accounts-menu';
+import ActionsMenu from './components/menus/actions-menu';
 
 function Root() {
-  const [state, setState] = React.useState({
-    open: false,
-  });
+  const drawerWidth = 200;
 
-  const nav = useNavigate();
-
-  const toggleDrawer = (open: boolean) => () => {
-    setState({ ...state, open: open });
-  }
-
-  const send = (location: string) => {
-    toggleDrawer(false);
-    nav(location);
-  }
-
-  return <div>
-    <AppBar position='static'>
+  return <Box sx={{ display: 'flex' }}>
+    <AppBar
+      position='fixed'
+      sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+    >
       <Toolbar variant='dense'>
-        <IconButton
-          size="large"
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          sx={{ mr: 2 }}
-          onClick={toggleDrawer(true)}
-        >
-          <MenuIcon />
-        </IconButton>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Budge
         </Typography>
@@ -46,25 +26,31 @@ function Root() {
       </Toolbar>
     </AppBar>
     <Drawer
+      sx={{
+        width: drawerWidth,
+        flexShrink: 0,
+        '& .MuiDrawer-paper': {
+          width: drawerWidth,
+          boxSizing: 'border-box',
+        },
+      }}
+      variant="permanent"
       anchor="left"
-      open={state.open}
-      onClose={toggleDrawer(false)}>
-      <Box
-        sx={{ width: 250 }}
-        role="presentation">
-        <List>
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => send('/')}>
-              <ListItemText>
-                Hi
-              </ListItemText>
-            </ListItemButton>
-          </ListItem>
-        </List>
-      </Box>
+    >
+      <Toolbar variant='dense' />
+      <Divider />
+      <ActionsMenu />
+      <AccountsMenu />
     </Drawer>
-    <Outlet />
-  </div>
+    <Box
+      component="main"
+      sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
+    >
+      <Toolbar variant='dense' />
+      <Outlet />
+    </Box>
+
+  </Box>
 }
 
 function AppRoot() {
