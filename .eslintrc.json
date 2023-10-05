@@ -21,6 +21,10 @@
       {
         "allowTemplateLiterals": true
       }
+    ],
+    "strict": [
+      "error",
+      "global"
     ]
   }
 }
