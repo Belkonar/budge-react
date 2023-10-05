@@ -55,7 +55,7 @@ let setup = false;
 
 export function setupIpc(ipcMain: Electron.IpcMain) {
   if (!setup) {
-    ipcMain.handle('dataApi', (_: any, request: IpcRequest) => dataApi(request));
+    ipcMain.handle('dataApi', (_: unknown, request: IpcRequest) => dataApi(request));
 
     setup = true;
   }

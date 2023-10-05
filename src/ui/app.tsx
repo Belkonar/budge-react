@@ -68,7 +68,7 @@ function Root() {
 }
 
 function AppRoot() {
-  const [state, setState] = React.useState<{ mode: PaletteMode }>({
+  const [state] = React.useState<{ mode: PaletteMode }>({
     mode: 'dark'
   });
 
