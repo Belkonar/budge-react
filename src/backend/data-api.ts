@@ -1,6 +1,14 @@
 import { MongoClient } from 'mongodb';
+import { existsSync, readFileSync } from 'fs';
 
-const client = new MongoClient('mongodb://127.0.0.1:27017');
+let mongo_uri = 'mongodb://127.0.0.1:27017';
+
+if (existsSync('overrides.json')) {
+  const overrides = JSON.parse(readFileSync('overrides.json', 'utf8'));
+  mongo_uri = overrides.mongo_uri;
+}
+
+const client = new MongoClient(mongo_uri);
 const database = client.db('finances');
 
 async function insertOneHandler(request: IpcInsertOne) {
