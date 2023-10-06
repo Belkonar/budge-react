@@ -6,10 +6,12 @@ import {
   Outlet,
 } from 'react-router-dom';
 import Home from './components/home';
-import { AppBar, Box, CssBaseline, Drawer, FormControl, MenuItem, PaletteMode, Select, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
+import { AppBar, Box, CssBaseline, Drawer, IconButton, PaletteMode, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
 import AccountsMenu from './components/menus/accounts-menu';
 import ActionsMenu from './components/menus/actions-menu';
 import AccountsComponent from './components/accounts';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 function Root() {
   const drawerWidth = 200;
@@ -53,6 +55,11 @@ function Root() {
     localStorage.setItem('theme', theme);
   }
 
+  const toggleTheme = () => {
+    const newMode = state.mode === 'light' ? 'dark' : 'light';
+    setTheme(newMode);
+  }
+
   return <ThemeProvider theme={state.mode === 'light' ? lightTheme : darkTheme}>
     <CssBaseline />
 
@@ -65,16 +72,10 @@ function Root() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Budge
           </Typography>
-          <Box sx={{ width: 200 }}>
-            <FormControl fullWidth>
-              <Select
-                value={state.mode}
-                onChange={(mode) => { setTheme(mode.target.value as PaletteMode) }}
-              >
-                <MenuItem value={'light'}>Light Mode</MenuItem>
-                <MenuItem value={'dark'}>Dark Mode</MenuItem>
-              </Select>
-            </FormControl>
+          <Box>
+            <IconButton sx={{ ml: 1 }} onClick={toggleTheme} color="inherit">
+              {state.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
           </Box>
         </Toolbar>
       </AppBar>
