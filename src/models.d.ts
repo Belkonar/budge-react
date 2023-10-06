@@ -12,6 +12,7 @@ Ground rules for types.
 interface Account {
   _id: string;
   name: string;
+  description: string;
   type: 'debit' | 'credit';
 }
 

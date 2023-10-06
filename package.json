@@ -46,6 +46,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.11",
     "@mui/material": "^5.14.11",
+    "@mui/x-data-grid": "^6.16.0",
     "@reduxjs/toolkit": "^1.9.6",
     "bootstrap": "^5.3.2",
     "electron-squirrel-startup": "^1.0.0",
