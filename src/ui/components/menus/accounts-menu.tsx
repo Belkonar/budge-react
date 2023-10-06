@@ -1,5 +1,6 @@
-import { List, ListSubheader, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { List, ListSubheader, ListItem, ListItemButton, ListItemText, ListItemIcon } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 
 export default function AccountsMenu() {
   const nav = useNavigate();
@@ -14,6 +15,9 @@ export default function AccountsMenu() {
   >
     <ListItem disablePadding>
       <ListItemButton onClick={() => nav('/')}>
+        <ListItemIcon>
+          <ListAltIcon />
+        </ListItemIcon>
         <ListItemText>
           Checking
         </ListItemText>
