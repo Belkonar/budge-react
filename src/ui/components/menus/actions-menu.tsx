@@ -25,7 +25,7 @@ export default function ActionsMenu() {
       </ListItemButton>
     </ListItem>
     <ListItem disablePadding>
-      <ListItemButton onClick={() => nav('/')}>
+      <ListItemButton onClick={() => nav('/accounts')}>
         <ListItemIcon>
           <ArticleIcon />
         </ListItemIcon>

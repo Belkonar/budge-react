@@ -9,6 +9,7 @@ import Home from './components/home';
 import { AppBar, Box, CssBaseline, Drawer, PaletteMode, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
 import AccountsMenu from './components/menus/accounts-menu';
 import ActionsMenu from './components/menus/actions-menu';
+import AccountsComponent from './components/accounts';
 
 function Root() {
   const drawerWidth = 200;
@@ -66,8 +67,8 @@ function AppRoot() {
           element: <Home />,
         },
         {
-          path: '/a',
-          element: <div>Hello world!</div>,
+          path: '/accounts',
+          element: <AccountsComponent />,
         },
       ]
     }
