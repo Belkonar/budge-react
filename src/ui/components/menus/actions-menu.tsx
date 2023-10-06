@@ -1,5 +1,7 @@
-import { List, ListSubheader, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { List, ListSubheader, ListItem, ListItemButton, ListItemText, ListItemIcon } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import HomeIcon from '@mui/icons-material/Home';
+import ArticleIcon from '@mui/icons-material/Article';
 
 export default function ActionsMenu() {
   const nav = useNavigate();
@@ -14,6 +16,19 @@ export default function ActionsMenu() {
   >
     <ListItem disablePadding>
       <ListItemButton onClick={() => nav('/')}>
+        <ListItemIcon>
+          <HomeIcon />
+        </ListItemIcon>
+        <ListItemText>
+          Home
+        </ListItemText>
+      </ListItemButton>
+    </ListItem>
+    <ListItem disablePadding>
+      <ListItemButton onClick={() => nav('/')}>
+        <ListItemIcon>
+          <ArticleIcon />
+        </ListItemIcon>
         <ListItemText>
           Accounts
         </ListItemText>

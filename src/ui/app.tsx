@@ -77,6 +77,15 @@ function AppRoot() {
     palette: {
       mode: state.mode,
     },
+    components: {
+      MuiListItemIcon: {
+        defaultProps: {
+          sx: {
+            minWidth: 32,
+          }
+        }
+      }
+    }
   });
 
   return <ThemeProvider theme={darkTheme}>

@@ -1,13 +1,11 @@
-import { useNavigate } from 'react-router-dom';
+import { Typography } from '@mui/material';
 
 export default function Home() {
-  const nav = useNavigate();
-
-  const handleClick = () => {
-    nav('/a');
-  }
-
   return <>
-    <button className="btn btn-primary btn-sm" onClick={handleClick}>Hi</button>
+    <Typography paragraph>
+      Welcome to Budge!
+
+      You can use the navigation menu on the left to manage your accounts.
+    </Typography>
   </>
 }
