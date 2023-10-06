@@ -6,7 +6,7 @@ import {
   Outlet,
 } from 'react-router-dom';
 import Home from './components/home';
-import { AppBar, Box, CssBaseline, Drawer, PaletteMode, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
+import { AppBar, Box, CssBaseline, Drawer, FormControl, MenuItem, PaletteMode, Select, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
 import AccountsMenu from './components/menus/accounts-menu';
 import ActionsMenu from './components/menus/actions-menu';
 import AccountsComponent from './components/accounts';
@@ -14,8 +14,8 @@ import AccountsComponent from './components/accounts';
 function Root() {
   const drawerWidth = 200;
 
-  const [state] = React.useState<{ mode: PaletteMode }>({
-    mode: 'dark'
+  const [state, setState] = React.useState<{ mode: PaletteMode }>({
+    mode: localStorage.getItem('theme') === 'dark' ? 'dark' : 'light',
   });
 
   const darkTheme = createTheme({
@@ -48,6 +48,11 @@ function Root() {
     }
   });
 
+  const setTheme = (theme: PaletteMode) => {
+    setState({ mode: theme });
+    localStorage.setItem('theme', theme);
+  }
+
   return <ThemeProvider theme={state.mode === 'light' ? lightTheme : darkTheme}>
     <CssBaseline />
 
@@ -60,7 +65,17 @@ function Root() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Budge
           </Typography>
-
+          <Box sx={{ width: 200 }}>
+            <FormControl fullWidth>
+              <Select
+                value={state.mode}
+                onChange={(mode) => { setTheme(mode.target.value as PaletteMode) }}
+              >
+                <MenuItem value={'light'}>Light Mode</MenuItem>
+                <MenuItem value={'dark'}>Dark Mode</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
         </Toolbar>
       </AppBar>
       <Drawer
