@@ -14,50 +14,84 @@ import AccountsComponent from './components/accounts';
 function Root() {
   const drawerWidth = 200;
 
-  return <Box sx={{ display: 'flex' }}>
-    <AppBar
-      position='fixed'
-      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-    >
-      <Toolbar variant='dense'>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Budge
-        </Typography>
-
-      </Toolbar>
-    </AppBar>
-    <Drawer
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-          width: drawerWidth,
-          boxSizing: 'border-box',
-        },
-      }}
-      variant="permanent"
-      anchor="left"
-    >
-      <Toolbar variant='dense' />
-      <ActionsMenu />
-      <AccountsMenu />
-    </Drawer>
-    <Box
-      component="main"
-      sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
-    >
-      <Toolbar variant='dense' />
-      <Outlet />
-    </Box>
-
-  </Box>
-}
-
-function AppRoot() {
   const [state] = React.useState<{ mode: PaletteMode }>({
     mode: 'dark'
   });
 
+  const darkTheme = createTheme({
+    palette: {
+      mode: 'dark',
+    },
+    components: {
+      MuiListItemIcon: {
+        defaultProps: {
+          sx: {
+            minWidth: 32,
+          }
+        }
+      }
+    }
+  });
+
+  const lightTheme = createTheme({
+    palette: {
+      mode: 'light',
+    },
+    components: {
+      MuiListItemIcon: {
+        defaultProps: {
+          sx: {
+            minWidth: 32,
+          }
+        }
+      }
+    }
+  });
+
+  return <ThemeProvider theme={state.mode === 'light' ? lightTheme : darkTheme}>
+    <CssBaseline />
+
+    <Box sx={{ display: 'flex' }}>
+      <AppBar
+        position='fixed'
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <Toolbar variant='dense'>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Budge
+          </Typography>
+
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+          },
+        }}
+        variant="permanent"
+        anchor="left"
+      >
+        <Toolbar variant='dense' />
+        <ActionsMenu />
+        <AccountsMenu />
+      </Drawer>
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
+      >
+        <Toolbar variant='dense' />
+        <Outlet />
+      </Box>
+
+    </Box>
+  </ThemeProvider>
+}
+
+function AppRoot() {
   const router = createMemoryRouter([
     {
       element: <Root />,
@@ -74,25 +108,7 @@ function AppRoot() {
     }
   ]);
 
-  const darkTheme = createTheme({
-    palette: {
-      mode: state.mode,
-    },
-    components: {
-      MuiListItemIcon: {
-        defaultProps: {
-          sx: {
-            minWidth: 32,
-          }
-        }
-      }
-    }
-  });
-
-  return <ThemeProvider theme={darkTheme}>
-    <CssBaseline />
-    <RouterProvider router={router} />
-  </ThemeProvider>
+  return <RouterProvider router={router} />
 }
 
 function render() {
