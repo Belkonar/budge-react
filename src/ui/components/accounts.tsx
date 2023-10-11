@@ -3,11 +3,9 @@ import { DataGrid, GridActionsCellItem, GridColDef, GridToolbarContainer } from 
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
-
-const rows: Account[] = [
-  { _id: '1', name: 'Checking', description: 'My checking account', type: 'debit' },
-  { _id: '2', name: 'Apple', description: 'Apple Card for travel expenses', type: 'credit' },
-]
+import { useState } from 'react';
+import { useInitialLoad } from '../helpers';
+import { dataService } from '../services/data-service';
 
 function EditToolbar() {
   const nav = useNavigate();
@@ -19,6 +17,13 @@ function EditToolbar() {
 
 export default function AccountsComponent() {
   const nav = useNavigate();
+
+  const [rows, setRows] = useState<Account[]>([]);
+
+  useInitialLoad(async () => {
+    const accounts = await dataService.findMany<Account>('accounts', {});
+    setRows(accounts);
+  });
 
   const columns: GridColDef[] = [
     { field: 'name', headerName: 'Name', width: 200 },

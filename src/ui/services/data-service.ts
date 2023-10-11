@@ -52,6 +52,7 @@ class DataService {
   }
 
   async updateOne<TDocument = any>(collection: string, query: Filter<TDocument>, update: UpdateFilter<TDocument> | Partial<TDocument>, options?: UpdateOptions) {
+    console.log('updateOne', collection, query, update, options)
     const request: IpcUpdateOne = {
       kind: 'updateOne',
       collection,

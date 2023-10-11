@@ -1,20 +1,18 @@
-import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
-function useInitialLoad(func: () => Promise<void>) {
-  useEffect(() => {
-    func().catch(console.error);
-  }, []);
-}
+import { useInitialLoad } from '../helpers';
+import { v4 as uuidv4 } from 'uuid';
+import { dataService } from '../services/data-service';
+import { produce } from 'immer'
 
 export default function AccountEditComponent() {
   const { id } = useParams();
 
   const [account, setAccount] = useState<Account>({
-    _id: id ?? '',
+    _id: id ?? uuidv4(),
     name: 'Checking',
-    description: 'My checking account',
+    description: '',
     type: 'debit',
   });
 
@@ -24,33 +22,44 @@ export default function AccountEditComponent() {
 
   useInitialLoad(async () => {
     if (id) {
-      // TODO: fetch account from API
+      const account = await dataService.findOne<Account>('accounts', { _id: id });
+
+      if (account) {
+        setAccount(account);
+      }
     }
   });
 
-  function handleChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
-    setAccount({ ...account, [event.target.name]: event.target.value });
-  }
-
-  function handleSelectChange(event: SelectChangeEvent) {
-    setAccount({ ...account, [event.target.name]: event.target.value });
-  }
+  const saveAccount = () => {
+    dataService.updateOne('accounts', {
+      _id: account._id,
+    }, {
+      $set: account
+    }, {
+      upsert: true
+    });
+  };
 
   return <Box
     component="form"
     sx={{
-      '& .MuiTextField-root': { m: 1, width: '25ch' },
+      '& .MuiTextField-root': { mb: 1, mt: 1, width: '25ch' },
     }}
     noValidate
     autoComplete="off"
   >
-    <div>
+    <Typography variant='h4' gutterBottom>
+      Account {id ? 'Edit' : 'Creation'}
+    </Typography>
+    <Box>
       <TextField
         required
         label="Name"
         name="name"
         value={account.name}
-        onChange={handleChange}
+        onChange={(evt) => setAccount(produce(account, (account) => {
+          account.name = evt.target.value;
+        }))}
       />
       <br />
       <TextField
@@ -59,24 +68,32 @@ export default function AccountEditComponent() {
         label="Description"
         name="description"
         value={account.description}
-        onChange={handleChange}
+        onChange={(evt) => setAccount(produce(account, (account) => {
+          account.description = evt.target.value;
+        }))}
       />
       <br />
       <FormControl>
-        <InputLabel id="account-type">Age</InputLabel>
+        <InputLabel id="account-type">Account Type</InputLabel>
         <Select
           labelId="account-type"
-          id="demo-simple-select"
+          id="account-type"
           value={account.type}
-          label="Type"
+          label="Account Type"
           name="type"
-          onChange={handleSelectChange}
-          sx={{ m: 1, width: '25ch' }}
+          onChange={(evt) => setAccount(produce(account, (account) => {
+            account.type = evt.target.value as AccountType;
+          }))}
+          sx={{ mb: 1, mt: 1, width: '25ch' }}
         >
           <MenuItem value={'debit'}>Debit</MenuItem>
           <MenuItem value={'credit'}>Credit</MenuItem>
         </Select>
       </FormControl>
-    </div>
+
+    </Box>
+    <Box>
+      <Button sx={{ mb: 1, mt: 1 }} variant="outlined" onClick={saveAccount}>Save</Button>
+    </Box>
   </Box>;
 }
