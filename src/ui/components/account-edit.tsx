@@ -1,4 +1,4 @@
-import { Box, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -19,7 +19,7 @@ export default function AccountEditComponent() {
   });
 
   useEffect(() => {
-    console.log(account.name)
+    console.dir(account)
   }, [account]);
 
   useInitialLoad(async () => {
@@ -29,6 +29,10 @@ export default function AccountEditComponent() {
   });
 
   function handleChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
+    setAccount({ ...account, [event.target.name]: event.target.value });
+  }
+
+  function handleSelectChange(event: SelectChangeEvent) {
     setAccount({ ...account, [event.target.name]: event.target.value });
   }
 
@@ -65,7 +69,8 @@ export default function AccountEditComponent() {
           id="demo-simple-select"
           value={account.type}
           label="Type"
-          onChange={(type) => setAccount({ ...account, type: type.target.value as AccountType })}
+          name="type"
+          onChange={handleSelectChange}
           sx={{ m: 1, width: '25ch' }}
         >
           <MenuItem value={'debit'}>Debit</MenuItem>
