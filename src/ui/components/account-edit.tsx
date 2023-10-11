@@ -35,23 +35,31 @@ export default function AccountEditComponent() {
     }
   });
 
-  const saveAccount = () => {
-    dataService.updateOne('accounts', {
-      _id: account._id,
-    }, {
-      $set: account
-    }, {
-      upsert: true
-    }).then(() => {
+  const saveAccount = async () => {
+    try {
+      await dataService.updateOne('accounts', {
+        _id: account._id,
+      }, {
+        $set: account
+      }, {
+        upsert: true
+      })
+
       dispatch(addAlert({
         type: 'success',
         message: 'Account saved successfully.',
         autoHide: true,
       }));
-    });
+    } catch (error) {
+      dispatch(addAlert({
+        type: 'error',
+        message: 'Account failed to save.',
+        autoHide: true,
+      }));
+    }
   };
 
-  function mutate(func: (account: Account) => void) {
+  const mutate = (func: (account: Account) => void) => {
     setAccount(produce(account, func));
   }
 
