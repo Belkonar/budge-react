@@ -67,7 +67,7 @@ class DataService {
   }
 
   // TODO: change this to recalc all balances past the earliest date in an update.
-  async reCalcBalance(accountId: string, targetAccountId: string) {
+  async reCalcBalance(accountId: string, targetTransactionId: string) {
     let transactions: Transaction[] = [];
 
     let sum = 0;
@@ -100,9 +100,9 @@ class DataService {
       }
 
       // TODO: get a record to use as a starting point
-      if (chunk.filter(t => t._id === targetAccountId).length > 0) {
+      if (chunk.filter(t => t._id === targetTransactionId).length > 0) {
         // If the target is exactly the last in the list, we need to try one more time for more records.
-        if (chunk[chunk.length - 1]._id === targetAccountId) {
+        if (chunk[chunk.length - 1]._id === targetTransactionId) {
           breakNext = false;
         } else {
           break;
@@ -112,7 +112,7 @@ class DataService {
 
     const lastTransaction = transactions[transactions.length - 1];
 
-    if (lastTransaction._id !== targetAccountId) {
+    if (lastTransaction._id !== targetTransactionId) {
       sum = lastTransaction.rollup;
       transactions.pop();
     }
