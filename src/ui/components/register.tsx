@@ -23,7 +23,7 @@ export default function RegisterComponent() {
       { field: 'dateStamp', headerName: 'Date', width: 150, type: 'date', editable: true },
       { field: 'description', headerName: 'Description', flex: 1, editable: true },
       { field: 'amount', headerName: 'Amount', width: 150, type: 'number', editable: true },
-      { field: 'rollup', headerName: 'Rollup', width: 150, type: 'number', editable: true },
+      { field: 'rollup', headerName: 'Rollup', width: 150, type: 'number' },
     ]
   }, []);
 
@@ -49,6 +49,13 @@ export default function RegisterComponent() {
     }, {
       $set: newRow
     })
+
+    await dataService.reCalcBalance(accountId!, newRow._id);
+
+    setPaginationModel({
+      ...paginationModel,
+    })
+
     return newRow;
   }
 

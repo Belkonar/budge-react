@@ -5,6 +5,8 @@ function ipc<T>(request: IpcRequest): Promise<T> {
   return (window as any).dataApi(request);
 }
 
+const chunkSize = 50;
+
 class DataService {
   // The typing here is for safety, but it's not strictly necessary.
   async insertOne<T = any>(collection: string, obj: T) {
@@ -62,6 +64,72 @@ class DataService {
     };
 
     return ipc<void>(request);
+  }
+
+  // TODO: change this to recalc all balances past the earliest date in an update.
+  async reCalcBalance(accountId: string, targetAccountId: string) {
+    let transactions: Transaction[] = [];
+
+    let sum = 0;
+
+    let breakNext = true;
+
+    // Only calc up to four pages of transactions right now, later I'll get the count and do the math.
+    for (let i = 0; i < 4; i++) {
+      const chunk = await this.findMany<Transaction>(
+        'transactions',
+        {
+          accountId: accountId
+        },
+        {
+          sort: { dateStamp: -1, ordinal: -1 },
+          limit: chunkSize,
+          skip: i * chunkSize
+        }
+      );
+
+      transactions = transactions.concat(chunk);
+
+      if (breakNext) {
+        break;
+      }
+
+      if (chunk.length < chunkSize) {
+        // No more records to process
+        break;
+      }
+
+      // TODO: get a record to use as a starting point
+      if (chunk.filter(t => t._id === targetAccountId).length > 0) {
+        // If the target is exactly the last in the list, we need to try one more time for more records.
+        if (chunk[chunk.length - 1]._id === targetAccountId) {
+          breakNext = false;
+        } else {
+          break;
+        }
+      }
+    }
+
+    const lastTransaction = transactions[transactions.length - 1];
+
+    if (lastTransaction._id !== targetAccountId) {
+      sum = lastTransaction.rollup;
+      transactions.pop();
+    }
+
+    transactions = transactions.reverse();
+
+    const updates = transactions.map((t) => {
+      sum += t.amount;
+      return {
+        collection: 'transactions',
+        query: { _id: t._id },
+        update: { $set: { rollup: sum } },
+      };
+    });
+
+    // TODO: make an updateMany method
+    await Promise.all(updates.map(u => this.updateOne<Transaction>(u.collection, u.query, u.update)));
   }
 }
 
