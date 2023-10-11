@@ -1,6 +1,7 @@
 {
-    "cSpell.words": [
-        "upsert",
-        "uuidv"
-    ]
+  "cSpell.words": [
+    "upsert",
+    "uuidv"
+  ],
+  "typescript.preferences.quoteStyle": "single",
 }

@@ -3,7 +3,7 @@ import { DataGrid, GridActionsCellItem, GridColDef, GridToolbarContainer } from 
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useInitialLoad } from '../helpers';
 import { dataService } from '../services/data-service';
 
@@ -20,10 +20,12 @@ export default function AccountsComponent() {
 
   const [rows, setRows] = useState<Account[]>([]);
 
-  useInitialLoad(async () => {
+  const loadData = useCallback(async () => {
     const accounts = await dataService.findMany<Account>('accounts', {});
     setRows(accounts);
-  });
+  }, []);
+
+  useInitialLoad(loadData);
 
   const columns: GridColDef[] = [
     { field: 'name', headerName: 'Name', width: 200 },

@@ -1,33 +1,31 @@
-import * as ReactDOM from 'react-dom/client';
-import React from 'react';
-import {
-  createMemoryRouter,
-  RouterProvider,
-  Outlet,
-} from 'react-router-dom';
-import Home from './components/home';
-import { AppBar, Box, CssBaseline, Drawer, IconButton, PaletteMode, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
-import AccountsMenu from './components/menus/accounts-menu';
-import ActionsMenu from './components/menus/actions-menu';
-import AccountsComponent from './components/accounts';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import AccountEditComponent from './components/account-edit';
-import { AlertsComponent } from './components/alerts';
+import { AppBar, Box, CssBaseline, Drawer, IconButton, PaletteMode, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
+import React, { useMemo } from 'react';
+import * as ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
+import {
+  Outlet,
+  RouterProvider,
+  createMemoryRouter,
+} from 'react-router-dom';
+import { AlertsComponent } from './components/alerts';
+import AccountsMenu from './components/menus/accounts-menu';
+import ActionsMenu from './components/menus/actions-menu';
 
 import { store } from './main-store';
+import { getRoutes } from './routes';
 
-function Root() {
+export function Root() {
   const drawerWidth = 200;
 
   const [state, setState] = React.useState<{ mode: PaletteMode }>({
     mode: localStorage.getItem('theme') === 'dark' ? 'dark' : 'light',
   });
 
-  const darkTheme = createTheme({
+  const theme = useMemo(() => createTheme({
     palette: {
-      mode: 'dark',
+      mode: state.mode,
     },
     components: {
       MuiListItemIcon: {
@@ -38,22 +36,7 @@ function Root() {
         }
       }
     }
-  });
-
-  const lightTheme = createTheme({
-    palette: {
-      mode: 'light',
-    },
-    components: {
-      MuiListItemIcon: {
-        defaultProps: {
-          sx: {
-            minWidth: 32,
-          }
-        }
-      }
-    }
-  });
+  }), [state.mode]);
 
   const setTheme = (theme: PaletteMode) => {
     setState({ mode: theme });
@@ -65,7 +48,7 @@ function Root() {
     setTheme(newMode);
   }
 
-  return <ThemeProvider theme={state.mode === 'light' ? lightTheme : darkTheme}>
+  return <ThemeProvider theme={theme}>
     <CssBaseline />
 
     <Box sx={{ display: 'flex' }}>
@@ -114,29 +97,7 @@ function Root() {
 }
 
 function AppRoot() {
-  const router = createMemoryRouter([
-    {
-      element: <Root />,
-      children: [
-        {
-          path: '/',
-          element: <Home />,
-        },
-        {
-          path: '/accounts',
-          element: <AccountsComponent />,
-        },
-        {
-          path: '/account-new',
-          element: <AccountEditComponent />,
-        },
-        {
-          path: '/account-edit/:id',
-          element: <AccountEditComponent />,
-        }
-      ]
-    }
-  ]);
+  const router = useMemo(() => createMemoryRouter(getRoutes()), []);
 
   return <RouterProvider router={router} />
 }

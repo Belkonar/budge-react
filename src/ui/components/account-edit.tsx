@@ -74,6 +74,9 @@ export default function AccountEditComponent() {
     <Typography variant='h4' gutterBottom>
       Account {id ? 'Edit' : 'Creation'}
     </Typography>
+    <Typography paragraph>
+      Please note, changes to accounts will not be reflected in the application until you restart the application.
+    </Typography>
     <Box>
       <TextField
         required
