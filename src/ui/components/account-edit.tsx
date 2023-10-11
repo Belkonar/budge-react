@@ -1,5 +1,5 @@
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useInitialLoad } from '../helpers';
 import { v4 as uuidv4 } from 'uuid';
@@ -20,10 +20,6 @@ export default function AccountEditComponent() {
     description: '',
     type: 'debit',
   });
-
-  useEffect(() => {
-    console.dir(account)
-  }, [account]);
 
   useInitialLoad(async () => {
     if (id) {
