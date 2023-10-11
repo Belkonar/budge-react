@@ -30,10 +30,13 @@ interface Account {
 
 interface Transaction {
   _id: string;
-  timestamp: number;
+  dateStamp: Date;
+  ordinal: number;
   description: string;
   accountId: string;
   payeeId: string | null; // TODO: later
   categoryId: string | null;
-  balanced: boolean;
+  cleared: boolean;
+  amount: number;
+  rollup: number; // This is the running total of the register
 }
