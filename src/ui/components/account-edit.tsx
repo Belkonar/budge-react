@@ -6,7 +6,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { dataService } from '../services/data-service';
 import { produce } from 'immer'
 
+import { useDispatch } from 'react-redux';
+import { addAlert } from '../main-store';
+
 export default function AccountEditComponent() {
+  const dispatch = useDispatch();
+
   const { id } = useParams();
 
   const [account, setAccount] = useState<Account>({
@@ -37,8 +42,18 @@ export default function AccountEditComponent() {
       $set: account
     }, {
       upsert: true
+    }).then(() => {
+      dispatch(addAlert({
+        type: 'success',
+        message: 'Account saved successfully.',
+        autoHide: true,
+      }));
     });
   };
+
+  function mutate(func: (account: Account) => void) {
+    setAccount(produce(account, func));
+  }
 
   return <Box
     component="form"
@@ -57,9 +72,9 @@ export default function AccountEditComponent() {
         label="Name"
         name="name"
         value={account.name}
-        onChange={(evt) => setAccount(produce(account, (account) => {
+        onChange={(evt) => mutate((account) => {
           account.name = evt.target.value;
-        }))}
+        })}
       />
       <br />
       <TextField
@@ -68,9 +83,9 @@ export default function AccountEditComponent() {
         label="Description"
         name="description"
         value={account.description}
-        onChange={(evt) => setAccount(produce(account, (account) => {
+        onChange={(evt) => mutate((account) => {
           account.description = evt.target.value;
-        }))}
+        })}
       />
       <br />
       <FormControl>
@@ -81,9 +96,9 @@ export default function AccountEditComponent() {
           value={account.type}
           label="Account Type"
           name="type"
-          onChange={(evt) => setAccount(produce(account, (account) => {
+          onChange={(evt) => mutate((account) => {
             account.type = evt.target.value as AccountType;
-          }))}
+          })}
           sx={{ mb: 1, mt: 1, width: '25ch' }}
         >
           <MenuItem value={'debit'}>Debit</MenuItem>

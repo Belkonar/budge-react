@@ -13,6 +13,10 @@ import AccountsComponent from './components/accounts';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import AccountEditComponent from './components/account-edit';
+import { AlertsComponent } from './components/alerts';
+import { Provider } from 'react-redux';
+
+import { store } from './main-store';
 
 function Root() {
   const drawerWidth = 200;
@@ -105,6 +109,7 @@ function Root() {
       </Box>
 
     </Box>
+    <AlertsComponent />
   </ThemeProvider>
 }
 
@@ -141,7 +146,9 @@ function render() {
 
   root.render(
     <React.StrictMode>
-      <AppRoot />
+      <Provider store={store}>
+        <AppRoot />
+      </Provider>
     </React.StrictMode>
   );
 }
