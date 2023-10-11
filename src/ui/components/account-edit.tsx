@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useInitialLoad } from '../helpers';
@@ -62,7 +62,8 @@ export default function AccountEditComponent() {
   return <Box
     component="form"
     sx={{
-      '& .MuiTextField-root': { mb: 1, mt: 1, width: '25ch' },
+      '& .MuiFormControl-root': { mb: 1, mt: 1 },
+      '& .MuiTextField-root': { width: '25ch' },
     }}
     noValidate
     autoComplete="off"
@@ -106,11 +107,14 @@ export default function AccountEditComponent() {
           onChange={(evt) => mutate((account) => {
             account.type = evt.target.value as AccountType;
           })}
-          sx={{ mb: 1, mt: 1, width: '25ch' }}
+          sx={{ width: '25ch' }}
+          disabled={id !== undefined}
+
         >
           <MenuItem value={'debit'}>Debit</MenuItem>
           <MenuItem value={'credit'}>Credit</MenuItem>
         </Select>
+        <FormHelperText>Account type cannot be changed once set.</FormHelperText>
       </FormControl>
 
     </Box>
