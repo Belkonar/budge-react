@@ -12,6 +12,7 @@ import ActionsMenu from './components/menus/actions-menu';
 import AccountsComponent from './components/accounts';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import AccountEditComponent from './components/account-edit';
 
 function Root() {
   const drawerWidth = 200;
@@ -120,6 +121,14 @@ function AppRoot() {
           path: '/accounts',
           element: <AccountsComponent />,
         },
+        {
+          path: '/account-new',
+          element: <AccountEditComponent />,
+        },
+        {
+          path: '/account-edit/:id',
+          element: <AccountEditComponent />,
+        }
       ]
     }
   ]);

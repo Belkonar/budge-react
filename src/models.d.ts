@@ -9,11 +9,13 @@ Ground rules for types.
 - Nullables should be unions instead of using the ? operator.
 */
 
+type AccountType = 'debit' | 'credit';
+
 interface Account {
   _id: string;
   name: string;
   description: string;
-  type: 'debit' | 'credit';
+  type: AccountType;
 }
 
 interface Transaction {
