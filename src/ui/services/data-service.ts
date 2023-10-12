@@ -1,8 +1,9 @@
 import { Filter, FindOptions, UpdateFilter, UpdateOptions, AnyBulkWriteOperation, Document } from 'mongodb';
 
-// This method is wack but it's the only real way to deal with it.
-function ipc<T>(request: IpcRequest): Promise<T> {
-  return (window as any).dataApi(request);
+declare global {
+  interface Window {
+    dataApi: <T>(request: IpcRequest) => Promise<T>;
+  }
 }
 
 class DataService {
@@ -14,7 +15,7 @@ class DataService {
       obj,
     };
 
-    return ipc<void>(request);
+    return await window.dataApi<void>(request);
   }
 
   // Note on query typing: The way these are meant to be used is that you either provide the document type
@@ -27,7 +28,7 @@ class DataService {
       options: options || null,
     };
 
-    return ipc<TResponse[]>(request);
+    return await window.dataApi<TResponse[]>(request);
   }
 
   async findOne<TDocument = any, TResponse = TDocument>(collection: string, query: Filter<TDocument>, options?: FindOptions): Promise<TResponse | null> {
@@ -38,7 +39,7 @@ class DataService {
       options: options || null,
     };
 
-    return ipc<TResponse>(request);
+    return await window.dataApi<TResponse>(request);
   }
 
   async deleteOne<TDocument = any>(collection: string, query: Filter<TDocument>) {
@@ -48,7 +49,7 @@ class DataService {
       query,
     };
 
-    return ipc<void>(request);
+    return await window.dataApi<void>(request);
   }
 
   async updateOne<TDocument = any>(collection: string, query: Filter<TDocument>, update: UpdateFilter<TDocument> | Partial<TDocument>, options?: UpdateOptions) {
@@ -60,7 +61,7 @@ class DataService {
       options: options || null,
     };
 
-    return ipc<void>(request);
+    return await window.dataApi<void>(request);
   }
 
   async bulkWrite<TDocument extends Document = any>(collection: string, operations: AnyBulkWriteOperation<TDocument>[]) {
@@ -70,7 +71,7 @@ class DataService {
       operations,
     };
 
-    return ipc<void>(request);
+    return await window.dataApi<void>(request);
   }
 
   async count<TDocument = any>(collection: string, query: Filter<TDocument>) {
@@ -80,7 +81,7 @@ class DataService {
       query,
     };
 
-    return ipc<number>(request);
+    return await window.dataApi<number>(request);
   }
 
   async reCalcBalance(accountId: string) {
