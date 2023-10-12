@@ -74,12 +74,13 @@ class DataService {
 
     let breakNext = true;
 
-    // Only calc up to four pages of transactions right now, later I'll get the count and do the math.
-    for (let i = 0; i < 4; i++) {
+    // Only calc up to ten pages of transactions right now, later I'll get the count and do the math.
+    // That's 500 transactions, which would be crazy to recalc.
+    for (let i = 0; i < 10; i++) {
       const chunk = await this.findMany<Transaction>(
         'transactions',
         {
-          accountId: accountId
+          accountId: accountId,
         },
         {
           sort: { dateStamp: -1, ordinal: -1 },
