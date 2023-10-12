@@ -1,4 +1,4 @@
-type IpcRequest = IpcInsertOne | IpcFindMany | IpcFindOne | IpcDeleteOne | IpcUpdateOne | IpcBulkWrite;
+type IpcRequest = IpcInsertOne | IpcFindMany | IpcFindOne | IpcDeleteOne | IpcUpdateOne | IpcBulkWrite | IpcCount;
 
 interface IpcInsertOne {
   kind: 'insertOne';
@@ -30,6 +30,12 @@ interface IpcBulkWrite {
   kind: 'bulkWrite';
   collection: string;
   operations: AnyBulkWriteOperation<Document>[];
+}
+
+interface IpcCount {
+  kind: 'count';
+  collection: string;
+  query: any;
 }
 
 interface IpcUpdateOne {

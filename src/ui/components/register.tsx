@@ -1,8 +1,8 @@
 import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useInitialLoad } from '../helpers';
-import { Button } from '@mui/material';
+import { useInitialLoad, currencyFormatter } from '../helpers';
+import { Button, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { v4 as uuidv4 } from 'uuid';
 import { dataService } from '../services/data-service';
@@ -15,15 +15,32 @@ export default function RegisterComponent() {
   const [rows, setRows] = useState<Transaction[]>([]);
 
   useInitialLoad(async () => {
-    setTotalCount(10);
+    const count = await dataService.count('transactions', {
+      accountId: accountId!
+    });
+
+    setTotalCount(count);
   })
 
   const columns: GridColDef[] = useMemo(() => {
     return [
       { field: 'dateStamp', headerName: 'Date', width: 150, type: 'date', editable: true },
       { field: 'description', headerName: 'Description', flex: 1, editable: true },
-      { field: 'amount', headerName: 'Amount', width: 150, type: 'number', editable: true },
-      { field: 'rollup', headerName: 'Rollup', width: 150, type: 'number' },
+      {
+        field: 'amount',
+        headerName: 'Amount',
+        width: 150,
+        type: 'number',
+        editable: true,
+        valueFormatter: currencyFormatter,
+      },
+      {
+        field: 'rollup',
+        headerName: 'Balance',
+        width: 150,
+        type: 'number',
+        valueFormatter: currencyFormatter,
+      },
     ]
   }, []);
 
@@ -87,12 +104,17 @@ export default function RegisterComponent() {
   </GridToolbarContainer>;
 
   return <>
+    <Typography variant="h4">Register</Typography>
+    <Typography paragraph>
+      This is the Register, you can manage your transactions here. It will automatically calculate your running balance.
+      Please note it does this based on the last cleared transaction, so try and clear them once in a while.
+    </Typography>
     <DataGrid
       rows={rows}
       getRowId={(row: Transaction) => row._id}
       columns={columns}
-      pageSizeOptions={[5]}
       disableRowSelectionOnClick
+      // pageSizeOptions={[25, 50]} // Maybe later
       paginationMode="server"
       rowCount={totalCount}
       paginationModel={paginationModel}

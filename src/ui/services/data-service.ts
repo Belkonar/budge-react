@@ -73,6 +73,16 @@ class DataService {
     return ipc<void>(request);
   }
 
+  async count<TDocument = any>(collection: string, query: Filter<TDocument>) {
+    const request: IpcCount = {
+      kind: 'count',
+      collection,
+      query,
+    };
+
+    return ipc<number>(request);
+  }
+
   async reCalcBalance(accountId: string) {
     const transactions = await this.findMany<Transaction>(
       'transactions',

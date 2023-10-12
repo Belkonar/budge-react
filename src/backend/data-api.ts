@@ -62,6 +62,11 @@ async function bulkWriteHandler(request: IpcBulkWrite) {
   await collection.bulkWrite(request.operations);
 }
 
+async function countHandler(request: IpcCount) {
+  const collection = database.collection(request.collection);
+  return await collection.countDocuments(request.query);
+}
+
 const handlers = {
   insertOne: insertOneHandler,
   findMany: findManyHandler,
@@ -69,6 +74,7 @@ const handlers = {
   deleteOne: deleteOneHandler,
   updateOne: updateOneHandler,
   bulkWrite: bulkWriteHandler,
+  count: countHandler,
 };
 
 async function dataApi(request: IpcRequest) {
