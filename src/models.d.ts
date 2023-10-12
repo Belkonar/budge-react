@@ -40,3 +40,6 @@ interface Transaction {
   amount: number;
   rollup: number; // This is the running total of the register
 }
+
+// AnyBulkWriteOperation, Filter, FindOptions, UpdateFilter, UpdateOptions, Document
+

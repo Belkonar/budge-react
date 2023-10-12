@@ -50,7 +50,7 @@ export default function RegisterComponent() {
       $set: newRow
     })
 
-    await dataService.reCalcBalance(accountId!, newRow._id);
+    await dataService.reCalcBalance(accountId!);
 
     setPaginationModel({
       ...paginationModel,

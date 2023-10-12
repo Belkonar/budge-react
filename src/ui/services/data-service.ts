@@ -1,11 +1,9 @@
-import { Filter, FindOptions, UpdateFilter, UpdateOptions } from 'mongodb';
+import { Filter, FindOptions, UpdateFilter, UpdateOptions, AnyBulkWriteOperation, Document } from 'mongodb';
 
 // This method is wack but it's the only real way to deal with it.
 function ipc<T>(request: IpcRequest): Promise<T> {
   return (window as any).dataApi(request);
 }
-
-const chunkSize = 50;
 
 class DataService {
   // The typing here is for safety, but it's not strictly necessary.
@@ -54,7 +52,6 @@ class DataService {
   }
 
   async updateOne<TDocument = any>(collection: string, query: Filter<TDocument>, update: UpdateFilter<TDocument> | Partial<TDocument>, options?: UpdateOptions) {
-    console.log('updateOne', collection, query, update, options)
     const request: IpcUpdateOne = {
       kind: 'updateOne',
       collection,
@@ -66,59 +63,29 @@ class DataService {
     return ipc<void>(request);
   }
 
-  // TODO: change this to recalc all balances past the earliest date in an update.
-  async reCalcBalance(accountId: string, targetTransactionId: string) {
-    let transactions: Transaction[] = [];
+  async bulkWrite<TDocument extends Document = any>(collection: string, operations: AnyBulkWriteOperation<TDocument>[]) {
+    const request: IpcBulkWrite = {
+      kind: 'bulkWrite',
+      collection,
+      operations,
+    };
 
-    let sum = 0;
+    return ipc<void>(request);
+  }
 
-    let breakNext = true;
-
-    // Only calc up to ten pages of transactions right now, later I'll get the count and do the math.
-    // That's 500 transactions, which would be crazy to recalc.
-    for (let i = 0; i < 10; i++) {
-      const chunk = await this.findMany<Transaction>(
-        'transactions',
-        {
-          accountId: accountId,
-        },
-        {
-          sort: { dateStamp: -1, ordinal: -1 },
-          limit: chunkSize,
-          skip: i * chunkSize
-        }
-      );
-
-      transactions = transactions.concat(chunk);
-
-      if (breakNext) {
-        break;
+  async reCalcBalance(accountId: string) {
+    const transactions = await this.findMany<Transaction>(
+      'transactions',
+      {
+        accountId: accountId,
+        cleared: false,
+      },
+      {
+        sort: { dateStamp: 1, ordinal: 1 },
       }
+    );
 
-      if (chunk.length < chunkSize) {
-        // No more records to process
-        break;
-      }
-
-      // TODO: get a record to use as a starting point
-      if (chunk.filter(t => t._id === targetTransactionId).length > 0) {
-        // If the target is exactly the last in the list, we need to try one more time for more records.
-        if (chunk[chunk.length - 1]._id === targetTransactionId) {
-          breakNext = false;
-        } else {
-          break;
-        }
-      }
-    }
-
-    const lastTransaction = transactions[transactions.length - 1];
-
-    if (lastTransaction._id !== targetTransactionId) {
-      sum = lastTransaction.rollup;
-      transactions.pop();
-    }
-
-    transactions = transactions.reverse();
+    let sum = 0; // TODO: use the last clear balance instead of 0 if it exists
 
     const updates = transactions.map((t) => {
       sum += t.amount;
@@ -126,11 +93,22 @@ class DataService {
         collection: 'transactions',
         query: { _id: t._id },
         update: { $set: { rollup: sum } },
+        shouldUpdate: sum !== t.rollup,
       };
     });
 
-    // TODO: make an updateMany method
-    await Promise.all(updates.map(u => this.updateOne<Transaction>(u.collection, u.query, u.update)));
+    const bulkOperations = updates.filter(x => x.shouldUpdate).map<AnyBulkWriteOperation<Transaction>>(x => {
+      return {
+        updateOne: {
+          filter: x.query,
+          update: x.update,
+        },
+      };
+    });
+
+    if (bulkOperations.length > 0) {
+      await this.bulkWrite<Transaction>('transactions', bulkOperations);
+    }
   }
 }
 

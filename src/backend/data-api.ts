@@ -57,12 +57,18 @@ async function updateOneHandler(request: IpcUpdateOne) {
   }
 }
 
+async function bulkWriteHandler(request: IpcBulkWrite) {
+  const collection = database.collection(request.collection);
+  await collection.bulkWrite(request.operations);
+}
+
 const handlers = {
   insertOne: insertOneHandler,
   findMany: findManyHandler,
   findOne: findOneHandler,
   deleteOne: deleteOneHandler,
   updateOne: updateOneHandler,
+  bulkWrite: bulkWriteHandler,
 };
 
 async function dataApi(request: IpcRequest) {
