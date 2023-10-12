@@ -84,7 +84,7 @@ export default function RegisterComponent() {
       rollup: 0,
       description: '',
       dateStamp: new Date(),
-      ordinal: (new Date()).getUTCMinutes(),
+      ordinal: (new Date()).getTime() / 1000,
       payeeId: null,
       categoryId: null,
       cleared: false,
