@@ -57,6 +57,8 @@ export default function RegisterComponent() {
         dateStamp: -1,
         ordinal: -1,
       },
+      limit: paginationModel.pageSize,
+      skip: paginationModel.page * paginationModel.pageSize,
     }).then(setRows);
   }, [totalCount, paginationModel]);
 
@@ -106,7 +108,7 @@ export default function RegisterComponent() {
   return <>
     <Typography variant="h4">Register</Typography>
     <Typography paragraph>
-      This is the Register, you can manage your transactions here. It will automatically calculate your running balance.
+      This is the register, you can manage your transactions here. It will automatically calculate your running balance.
       Please note it does this based on the last cleared transaction, so try and clear them once in a while.
     </Typography>
     <DataGrid
