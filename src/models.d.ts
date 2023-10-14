@@ -1,9 +1,3 @@
-interface DataApi {
-  query: () => Promise<string>;
-  exec: () => Promise<string>;
-  insertOne: (collection: string, obj: any) => Promise<string>;
-}
-
 /*
 Ground rules for types.
 - Nullables should be unions instead of using the ? operator.
@@ -41,5 +35,20 @@ interface Transaction {
   rollup: number; // This is the running total of the register
 }
 
-// AnyBulkWriteOperation, Filter, FindOptions, UpdateFilter, UpdateOptions, Document
+interface ScheduledTransaction {
+  _id: string;
+  name: string;
+  accountId: string;
+  payeeId: string | null; // TODO: later
+  categoryId: string | null;
+  amount: number;
 
+  // While manual and automatic are easily understood, estimate is more vague.
+  // It's a transaction that does nothing, and cannot be committed, but is used for
+  // balance projections.
+  commitType: 'manual' | 'automatic' | 'estimate';
+
+  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  frequencyConfig: map<string, any>; // Maybe I'll break this into multiple types later but for now it's just a map
+  lastCommit: Date | null; // Not used for estimate transactions
+}

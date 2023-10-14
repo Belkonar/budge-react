@@ -109,7 +109,6 @@ export default function AccountEditComponent() {
           })}
           sx={{ width: '25ch' }}
           disabled={id !== undefined}
-
         >
           <MenuItem value={'debit'}>Debit</MenuItem>
           <MenuItem value={'credit'}>Credit</MenuItem>

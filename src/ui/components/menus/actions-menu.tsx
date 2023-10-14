@@ -2,6 +2,7 @@ import { List, ListSubheader, ListItem, ListItemButton, ListItemText, ListItemIc
 import { useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import ArticleIcon from '@mui/icons-material/Article';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 export default function ActionsMenu() {
   const nav = useNavigate();
@@ -31,6 +32,16 @@ export default function ActionsMenu() {
         </ListItemIcon>
         <ListItemText>
           Accounts
+        </ListItemText>
+      </ListItemButton>
+    </ListItem>
+    <ListItem disablePadding>
+      <ListItemButton onClick={() => nav('/schedules')}>
+        <ListItemIcon>
+          <CalendarMonthIcon />
+        </ListItemIcon>
+        <ListItemText>
+          Schedule
         </ListItemText>
       </ListItemButton>
     </ListItem>

@@ -4,6 +4,7 @@ import AccountsComponent from './components/accounts';
 import Home from './components/home';
 import RegisterComponent from './components/register';
 import { Root } from './app';
+import SchedulesComponent from './components/schedules';
 
 export function getRoutes(): RouteObject[] {
   return [
@@ -29,6 +30,10 @@ export function getRoutes(): RouteObject[] {
         {
           path: '/register/:accountId',
           element: <RegisterComponent />,
+        },
+        {
+          path: '/schedules',
+          element: <SchedulesComponent />,
         }
       ]
     }
