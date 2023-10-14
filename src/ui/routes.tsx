@@ -5,6 +5,7 @@ import Home from './components/home';
 import RegisterComponent from './components/register';
 import { Root } from './app';
 import SchedulesComponent from './components/schedules';
+import ScheduleEditComponent from './components/schedule-edit';
 
 export function getRoutes(): RouteObject[] {
   return [
@@ -34,7 +35,15 @@ export function getRoutes(): RouteObject[] {
         {
           path: '/schedules',
           element: <SchedulesComponent />,
-        }
+        },
+        {
+          path: '/schedule-new',
+          element: <ScheduleEditComponent />,
+        },
+        {
+          path: '/schedule-edit/:id',
+          element: <ScheduleEditComponent />,
+        },
       ]
     }
   ];

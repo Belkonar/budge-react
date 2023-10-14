@@ -1,23 +1,37 @@
 import { dataService } from './data-service';
 
+export interface LookupOptions {
+  _id: string;
+  label: string;
+}
+
 /**
  * LookupService is a service that provides lookup tables for the UI.
  *
  * It only works with collections inheriting from the Named interface.
  */
 class LookupService {
-  async getMap(table: string): Promise<Record<string, string>> {
-    const results = await dataService.findMany<Named>(table, {});
+  async getMap(collection: string): Promise<Record<string, string>> {
+    const results = await dataService.findMany<Named>(collection, {});
 
     return this.makeMap(results, '_id', 'name');
   }
 
-  async getArray(table: string): Promise<Named[]> {
-    const results = await dataService.findMany(table, {});
+  async getArray(collection: string): Promise<Named[]> {
+    const results = await dataService.findMany(collection, {});
 
     return results.map(({ _id, name }) => ({ _id, name }));
   }
 
+  /**
+   * @param collection The collection to get options for
+   * @returns options for an <Autocomplete> component
+   */
+  async getOptions(collection: string): Promise<LookupOptions[]> {
+    const results = await dataService.findMany(collection, {});
+
+    return results.map(({ _id, name }) => ({ _id, label: name }));
+  }
 
   private makeMap<T>(array: T[], key: keyof T, name: keyof T): Record<string, string> {
     return array.reduce((acc, item) => {

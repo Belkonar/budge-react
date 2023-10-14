@@ -15,6 +15,8 @@ import ActionsMenu from './components/menus/actions-menu';
 
 import { store } from './main-store';
 import { getRoutes } from './routes';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 
 export function Root() {
   const drawerWidth = 200;
@@ -97,7 +99,9 @@ export function Root() {
 }
 
 function AppRoot() {
-  const router = useMemo(() => createMemoryRouter(getRoutes()), []);
+  const router = useMemo(() => createMemoryRouter(getRoutes(), {
+    initialEntries: ['/schedule-new'],
+  }), []);
 
   return <RouterProvider router={router} />
 }
@@ -108,7 +112,9 @@ function render() {
   root.render(
     <React.StrictMode>
       <Provider store={store}>
-        <AppRoot />
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <AppRoot />
+        </LocalizationProvider>
       </Provider>
     </React.StrictMode>
   );

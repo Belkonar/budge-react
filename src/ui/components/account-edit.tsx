@@ -1,6 +1,6 @@
 import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useInitialLoad } from '../helpers';
 import { v4 as uuidv4 } from 'uuid';
 import { dataService } from '../services/data-service';
@@ -11,6 +11,7 @@ import { addAlert } from '../main-store';
 
 export default function AccountEditComponent() {
   const dispatch = useDispatch();
+  const nav = useNavigate();
 
   const { id } = useParams();
 
@@ -46,6 +47,10 @@ export default function AccountEditComponent() {
         message: 'Account saved successfully.',
         autoHide: true,
       }));
+
+      if (!id) {
+        nav(`/account-edit/${account._id}`);
+      }
     } catch (error) {
       dispatch(addAlert({
         type: 'error',

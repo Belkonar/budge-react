@@ -38,6 +38,9 @@ interface Transaction {
   rollup: number; // This is the running total of the register
 }
 
+type CommitType = 'manual' | 'automatic' | 'estimate';
+type FrequencyType = 'daily' | 'weekly' | 'monthly' | 'yearly';
+
 interface ScheduledTransaction {
   _id: string;
   name: string;
@@ -49,9 +52,10 @@ interface ScheduledTransaction {
   // While manual and automatic are easily understood, estimate is more vague.
   // It's a transaction that does nothing, and cannot be committed, but is used for
   // balance projections.
-  commitType: 'manual' | 'automatic' | 'estimate';
+  commitType: CommitType;
 
-  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  frequency: FrequencyType;
   frequencyConfig: map<string, any>; // Maybe I'll break this into multiple types later but for now it's just a map
   lastCommit: Date | null; // Not used for estimate transactions
+  startDate: Date;
 }

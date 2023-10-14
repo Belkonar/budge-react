@@ -24,7 +24,13 @@ export default function RegisterComponent() {
 
   const columns: GridColDef[] = useMemo(() => {
     return [
-      { field: 'dateStamp', headerName: 'Date', width: 150, type: 'date', editable: true },
+      {
+        field: 'dateStamp',
+        headerName: 'Date',
+        width: 150,
+        type: 'date',
+        editable: true
+      },
       { field: 'description', headerName: 'Description', flex: 1, editable: true },
       {
         field: 'amount',
