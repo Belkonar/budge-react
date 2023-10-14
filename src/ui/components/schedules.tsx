@@ -26,7 +26,7 @@ export default function SchedulesComponent() {
   const [rows, setRows] = useState<ScheduledTransaction[]>([]);
 
   useInitialLoad(async () => {
-    setAccounts(await lookupService.getAccounts());
+    setAccounts(await lookupService.getMap('accounts'));
   });
 
   useEffect(() => {

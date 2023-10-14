@@ -15,9 +15,12 @@ interface InnerAlert extends Alert {
 
 type AccountType = 'debit' | 'credit';
 
-interface Account {
+interface Named {
   _id: string;
   name: string;
+}
+
+interface Account extends Named {
   description: string;
   type: AccountType;
 }
