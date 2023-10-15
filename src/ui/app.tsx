@@ -100,7 +100,7 @@ export function Root() {
 
 function AppRoot() {
   const router = useMemo(() => createMemoryRouter(getRoutes(), {
-    initialEntries: ['/schedule-new'],
+    initialEntries: ['/'],
   }), []);
 
   return <RouterProvider router={router} />
