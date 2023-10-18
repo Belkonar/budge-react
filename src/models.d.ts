@@ -59,3 +59,9 @@ interface ScheduledTransaction {
   lastCommit: Date | null; // Not used for estimate transactions
   startDate: Date;
 }
+
+// used for reporting
+interface BudgeInterval {
+  start: Date;
+  end: Date;
+}

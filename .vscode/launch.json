@@ -16,6 +16,9 @@
         "<node_internals>/**"
       ],
       "type": "node",
+      "env": {
+        "NODE_ENV": "development"
+      }
     }
   ]
 }
