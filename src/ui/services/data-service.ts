@@ -1,4 +1,5 @@
 import { Filter, FindOptions, UpdateFilter, UpdateOptions, AnyBulkWriteOperation, Document } from 'mongodb';
+import { perf } from './performance';
 
 declare global {
   interface Window {
@@ -84,8 +85,10 @@ class DataService {
     return await window.dataApi<number>(request);
   }
 
-  // May send this to the backend later
+  // The vast, vast majority of the cost of this function are the mongo calls. The rest is negligible, as in nanoseconds.
   async reCalcBalance(accountId: string) {
+    perf.start('reCalcBalance');
+    perf.start('reCalcBalance:findMany');
     const transactions = await this.findMany<Transaction>(
       'transactions',
       {
@@ -96,7 +99,9 @@ class DataService {
         sort: { dateStamp: 1, ordinal: 1 },
       }
     );
+    perf.end('reCalcBalance:findMany');
 
+    perf.start('reCalcBalance:calculations');
     let sum = 0; // TODO: use the last clear balance instead of 0 if it exists
 
     const updates = transactions.map((t) => {
@@ -108,7 +113,9 @@ class DataService {
         shouldUpdate: sum !== t.rollup,
       };
     });
+    perf.end('reCalcBalance:calculations');
 
+    perf.start('reCalcBalance:bulkWrite');
     const bulkOperations = updates.filter(x => x.shouldUpdate).map<AnyBulkWriteOperation<Transaction>>(x => {
       return {
         updateOne: {
@@ -117,10 +124,11 @@ class DataService {
         },
       };
     });
-
     if (bulkOperations.length > 0) {
       await this.bulkWrite<Transaction>('transactions', bulkOperations);
     }
+    perf.end('reCalcBalance:bulkWrite');
+    perf.end('reCalcBalance');
   }
 }
 

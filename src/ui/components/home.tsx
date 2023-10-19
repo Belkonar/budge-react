@@ -3,6 +3,7 @@ import { dataService } from '../services/data-service';
 import { addDays, format, isSameDay } from 'date-fns';
 import { reportService } from '../services/report-service';
 import { useEffect, useState } from 'react';
+import { perf } from '../services/performance';
 
 interface ScheduleAlert {
   type: AlertColor;
@@ -21,7 +22,7 @@ export default function Home() {
     // optimize this so that it only loads specific transactions.
     // That way we don't have to calc all of them every time we commit.
     const loadData = async () => {
-      performance.mark('getProjections');
+      perf.start('projections');
       const alerts: ScheduleAlert[] = [];
       const endTargetDate = addDays(new Date(), 7);
       const scheduledTransactions = await dataService.findMany<ScheduledTransaction>('scheduled-transactions', {
@@ -30,10 +31,10 @@ export default function Home() {
         }
       });
 
-      console.log(scheduledTransactions);
-
       for (const transaction of scheduledTransactions) {
+        perf.start(`projection-${transaction.name}`);
         const events = reportService.getScheduledProjections(transaction, endTargetDate);
+        perf.end(`projection-${transaction.name}`);
         if (events.length === 0) {
           continue;
         }
@@ -55,8 +56,7 @@ export default function Home() {
       }
 
       setAlerts(alerts);
-
-      console.log(performance.measure('getProjections', 'getProjections'));
+      perf.end('projections');
     };
 
     loadData().catch(console.error);

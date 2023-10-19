@@ -9,7 +9,7 @@ if (existsSync('overrides.json')) {
 }
 
 const client = new MongoClient(mongo_uri);
-const database = client.db('finances');
+export const database = client.db('finances');
 
 async function insertOneHandler(request: IpcInsertOne) {
   const collection = database.collection(request.collection);
