@@ -67,6 +67,11 @@ async function bulkWriteHandler(request: IpcBulkWrite) {
   await collection.bulkWrite(request.operations);
 }
 
+async function aggregateHandler(request: IpcAggregate) {
+  const collection = database.collection(request.collection);
+  return await collection.aggregate(request.pipeline).toArray();
+}
+
 const handlers = {
   insertOne: insertOneHandler,
   findMany: findManyHandler,
@@ -75,6 +80,7 @@ const handlers = {
   updateOne: updateOneHandler,
   bulkWrite: bulkWriteHandler,
   count: countHandler,
+  aggregate: aggregateHandler,
 };
 
 async function dataApi(request: IpcRequest) {

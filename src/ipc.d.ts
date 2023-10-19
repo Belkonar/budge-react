@@ -1,4 +1,4 @@
-type IpcRequest = IpcInsertOne | IpcFindMany | IpcFindOne | IpcDeleteOne | IpcUpdateOne | IpcBulkWrite | IpcCount;
+type IpcRequest = IpcInsertOne | IpcFindMany | IpcFindOne | IpcDeleteOne | IpcUpdateOne | IpcBulkWrite | IpcCount | IpcAggregate;
 
 interface IpcInsertOne {
   kind: 'insertOne';
@@ -44,6 +44,12 @@ interface IpcUpdateOne {
   query: any;
   update: any;
   options: any | null;
+}
+
+interface IpcAggregate {
+  kind: 'aggregate';
+  collection: string;
+  pipeline: any[];
 }
 
 type IpcRequestMethod<T> = (IpcRequest) => Promise<T>;

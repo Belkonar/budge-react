@@ -85,50 +85,58 @@ class DataService {
     return await window.dataApi<number>(request);
   }
 
-  // The vast, vast majority of the cost of this function are the mongo calls. The rest is negligible, as in nanoseconds.
+  async aggregate<TDocument = any>(collection: string, pipeline: any[]): Promise<TDocument[]> {
+    const request: IpcAggregate = {
+      kind: 'aggregate',
+      collection,
+      pipeline,
+    };
+
+    return await window.dataApi<TDocument[]>(request);
+
+  }
+
+  // For now I've switched this to an aggregation pipeline. In it's current state, it should be
+  // 100% good enough due to the extra stages.
   async reCalcBalance(accountId: string) {
-    perf.start('reCalcBalance');
-    perf.start('reCalcBalance:findMany');
-    const transactions = await this.findMany<Transaction>(
-      'transactions',
+    await dataService.aggregate('transactions', [
       {
-        accountId: accountId,
-        cleared: false,
+        $match: {
+          accountId,
+          cleared: false,
+        },
       },
       {
-        sort: { dateStamp: 1, ordinal: 1 },
-      }
-    );
-    perf.end('reCalcBalance:findMany');
-
-    perf.start('reCalcBalance:calculations');
-    let sum = 0; // TODO: use the last clear balance instead of 0 if it exists
-
-    const updates = transactions.map((t) => {
-      sum += t.amount;
-      return {
-        collection: 'transactions',
-        query: { _id: t._id },
-        update: { $set: { rollup: sum } },
-        shouldUpdate: sum !== t.rollup,
-      };
-    });
-    perf.end('reCalcBalance:calculations');
-
-    perf.start('reCalcBalance:bulkWrite');
-    const bulkOperations = updates.filter(x => x.shouldUpdate).map<AnyBulkWriteOperation<Transaction>>(x => {
-      return {
-        updateOne: {
-          filter: x.query,
-          update: x.update,
+        $setWindowFields: {
+          sortBy: {
+            dateStamp: 1,
+            ordinal: 1,
+          },
+          output: {
+            rollup: {
+              $sum: '$amount',
+              window: {
+                documents: ['unbounded', 'current'],
+              },
+            },
+          },
         },
-      };
-    });
-    if (bulkOperations.length > 0) {
-      await this.bulkWrite<Transaction>('transactions', bulkOperations);
-    }
-    perf.end('reCalcBalance:bulkWrite');
-    perf.end('reCalcBalance');
+      },
+      {
+        $set: {
+          rollup: {
+            $sum: ['$$ROOT.rollup', 0], // last clear balance
+          },
+        },
+      },
+      {
+        $merge: {
+          into: 'transactions',
+          on: '_id',
+          whenNotMatched: 'discard',
+        },
+      },
+    ]);
   }
 }
 
