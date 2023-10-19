@@ -147,7 +147,7 @@ export default function ScheduleEditComponent() {
           }}
         />
       </Box>
-      <Box>
+      {/* <Box>
         <FormControl>
           <InputLabel id="commit-type">Commit Type</InputLabel>
           <Select
@@ -168,7 +168,7 @@ export default function ScheduleEditComponent() {
             <MenuItem value={'estimate'}>Estimate</MenuItem>
           </Select>
         </FormControl>
-      </Box>
+      </Box> */}
       <Box>
         <DatePicker
           label="Start Date"

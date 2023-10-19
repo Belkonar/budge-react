@@ -1,4 +1,4 @@
-import { addDays, addMonths, addWeeks, isSameDay, setDay } from 'date-fns';
+import { addDays, addMonths, isSameDay, setDay } from 'date-fns';
 
 const dayList = [
   'sunday',
@@ -52,40 +52,53 @@ class ReportService {
     return projections;
   }
 
-  // For future optimization: Calculate the monday and friday of every other week within a date range.
+  // This is the costliest method, and it takes .2 ms for 5 years of data for 1 day in a week every other
+  // week. It takes 22ms to paint the screen, so I think this is fine.
   getWeeklyProjections(transaction: ScheduledTransaction, startDate: Date, endDate: Date): Date[] {
     const projections: Date[] = [];
 
-    let iter = startDate;
-
     const days = (transaction.frequencyConfig.daysOfWeek as string[]).map(day => dayMap[day]);
+
+    let iter = setDay(startDate, days[0]);
 
     if (days.length === 0) {
       return [];
     }
 
-    while (iter < endDate) {
-      // I'm going to clamp the list after this, so I don't need to worry about
-      // extra days before and after
+    const intervals: number[] = [];
 
-      projections.push(...days.map(day => setDay(iter, day)));
-
-      iter = addWeeks(iter, transaction.frequencyConfig.weeks);
-    }
-
-    return projections.filter(date => {
-      if (isSameDay(date, startDate)) {
-        if (transaction.lastCommit) {
-          return false;
-        }
-        else {
-          return true;
-        }
+    days.forEach((date, index) => {
+      if (index === days.length - 1) {
+        intervals.push(days[0] + (7 * transaction.frequencyConfig.weeks) - date)
       }
       else {
-        return date < endDate && date > startDate;
+        intervals.push(days[index + 1] - date)
       }
     });
+
+    if (isSameDay(iter, startDate)) {
+      projections.push(iter);
+    }
+
+    for (let i = 1; ; i++) {
+      iter = addDays(iter, intervals[i % intervals.length]);
+      if (iter > endDate) {
+        break;
+      }
+
+      if (isSameDay(iter, startDate)) {
+        if (transaction.lastCommit) {
+          continue;
+        }
+        else {
+          projections.push(iter);
+        }
+      }
+      else if (iter > startDate) {
+        projections.push(iter);
+      }
+    }
+    return projections;
   }
 
   // Will need to do a ton of testing.

@@ -21,6 +21,7 @@ export default function Home() {
     // optimize this so that it only loads specific transactions.
     // That way we don't have to calc all of them every time we commit.
     const loadData = async () => {
+      performance.mark('getProjections');
       const alerts: ScheduleAlert[] = [];
       const endTargetDate = addDays(new Date(), 7);
       const scheduledTransactions = await dataService.findMany<ScheduledTransaction>('scheduled-transactions', {
@@ -33,6 +34,9 @@ export default function Home() {
 
       for (const transaction of scheduledTransactions) {
         const events = reportService.getScheduledProjections(transaction, endTargetDate);
+        if (events.length === 0) {
+          continue;
+        }
 
         if (events[0] < new Date() || isSameDay(events[0], new Date())) {
           alerts.push({
@@ -51,6 +55,8 @@ export default function Home() {
       }
 
       setAlerts(alerts);
+
+      console.log(performance.measure('getProjections', 'getProjections'));
     };
 
     loadData().catch(console.error);

@@ -1,4 +1,4 @@
-const dates = [1, 5]
+const dates = [1]
 
 const intervals = [];
 
