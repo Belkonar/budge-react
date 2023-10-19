@@ -9,3 +9,4 @@ function dataApi(request: IpcRequest) {
 }
 
 contextBridge.exposeInMainWorld('dataApi', dataApi)
+contextBridge.exposeInMainWorld('ready', () => { ipcRenderer.invoke('ready') })

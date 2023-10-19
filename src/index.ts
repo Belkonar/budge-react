@@ -7,6 +7,10 @@ import { setupIpc } from './backend/data-api';
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
+
+// declare const SPLASH_WINDOW_WEBPACK_ENTRY: string;
+// declare const SPLASH_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
+
 // process.hrtime.bigint();
 // const inter: BudgeInterval = {
 //   start: parseISO('2023-10-01'),
@@ -40,11 +44,27 @@ if (require('electron-squirrel-startup')) {
 
 const devMode: boolean = process.env.NODE_ENV === 'development';
 
+let mainWindow: BrowserWindow | null = null;
+let splashWindow: BrowserWindow | null = null;
+
 const createWindow = (): void => {
   setupIpc(ipcMain);
 
+  ipcMain.handle('ready', () => {
+    if (splashWindow === null || mainWindow === null) {
+      return;
+    }
+    if (splashWindow) {
+      splashWindow.close();
+      splashWindow = null;
+    }
+    if (mainWindow) {
+      mainWindow.show();
+    }
+  })
+
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     height: 900,
     width: 1300,
     webPreferences: {
@@ -52,6 +72,7 @@ const createWindow = (): void => {
     },
     title: 'Budge',
     autoHideMenuBar: true,
+    show: false,
   });
 
   // and load the index.html of the app.
@@ -63,14 +84,14 @@ const createWindow = (): void => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const createSplash = (): void => {
-  const splashWindow = new BrowserWindow({
-    height: 900,
-    width: 1300,
+  splashWindow = new BrowserWindow({
+    height: 150,
+    width: 300,
     title: 'Budge',
     autoHideMenuBar: true,
   });
 
-  splashWindow.loadFile('splash.html');
+  splashWindow.loadFile('./src/splash.html');
 }
 
 if (!devMode) {
@@ -81,7 +102,7 @@ if (!devMode) {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
-//app.on('ready', createSplash);
+app.on('ready', createSplash);
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

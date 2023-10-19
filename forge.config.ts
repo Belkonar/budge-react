@@ -29,7 +29,7 @@ const config: ForgeConfig = {
             preload: {
               js: './src/preload.ts',
             },
-          },
+          }
         ],
       },
     }),

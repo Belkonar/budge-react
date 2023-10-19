@@ -84,6 +84,7 @@ class DataService {
     return await window.dataApi<number>(request);
   }
 
+  // May send this to the backend later
   async reCalcBalance(accountId: string) {
     const transactions = await this.findMany<Transaction>(
       'transactions',

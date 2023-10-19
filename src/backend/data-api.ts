@@ -57,14 +57,14 @@ async function updateOneHandler(request: IpcUpdateOne) {
   }
 }
 
-async function bulkWriteHandler(request: IpcBulkWrite) {
-  const collection = database.collection(request.collection);
-  await collection.bulkWrite(request.operations);
-}
-
 async function countHandler(request: IpcCount) {
   const collection = database.collection(request.collection);
   return await collection.countDocuments(request.query);
+}
+
+async function bulkWriteHandler(request: IpcBulkWrite) {
+  const collection = database.collection(request.collection);
+  await collection.bulkWrite(request.operations);
 }
 
 const handlers = {

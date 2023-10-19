@@ -17,9 +17,14 @@ import { store } from './main-store';
 import { getRoutes } from './routes';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+import { useInitialLoad } from './helpers';
 
 export function Root() {
   const drawerWidth = 200;
+
+  useInitialLoad(async () => {
+    (window as any).ready();
+  });
 
   const [state, setState] = React.useState<{ mode: PaletteMode }>({
     mode: localStorage.getItem('theme') === 'dark' ? 'dark' : 'light',
