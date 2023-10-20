@@ -14,7 +14,7 @@ class LookupService {
   async getMap(collection: string): Promise<Record<string, string>> {
     const results = await dataService.findMany<Named>(collection, {});
 
-    return this.makeMap(results, '_id', 'name');
+    return this.makeMapFromNamed(results);
   }
 
   async getArray(collection: string): Promise<Named[]> {
@@ -33,9 +33,9 @@ class LookupService {
     return results.map(({ _id, name }) => ({ _id, label: name }));
   }
 
-  private makeMap<T>(array: T[], key: keyof T, name: keyof T): Record<string, string> {
+  private makeMapFromNamed(array: Named[]): Record<string, string> {
     return array.reduce((acc, item) => {
-      acc[item[key] as unknown as string] = item[name] as unknown as string;
+      acc[item['_id']] = item['name'];
       return acc;
     }, {} as Record<string, string>);
   }

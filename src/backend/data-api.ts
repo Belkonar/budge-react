@@ -1,10 +1,16 @@
 import { MongoClient } from 'mongodb';
 import { existsSync, readFileSync } from 'fs';
+import { app } from 'electron';
+import { join } from 'path';
+
+const userDataPath = app.getPath('userData');
+const optionsPath = join(userDataPath, 'options.json');
+console.log(optionsPath);
 
 let mongo_uri = 'mongodb://127.0.0.1:27017';
 
-if (existsSync('overrides.json')) {
-  const overrides = JSON.parse(readFileSync('overrides.json', 'utf8'));
+if (existsSync(optionsPath)) {
+  const overrides = JSON.parse(readFileSync(optionsPath, 'utf8'));
   mongo_uri = overrides.mongo_uri;
 }
 

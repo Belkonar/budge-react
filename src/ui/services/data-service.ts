@@ -1,5 +1,4 @@
 import { Filter, FindOptions, UpdateFilter, UpdateOptions, AnyBulkWriteOperation, Document } from 'mongodb';
-import { perf } from './performance';
 
 declare global {
   interface Window {
